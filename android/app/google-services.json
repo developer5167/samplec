@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "746639355246",
+    "project_id": "chatspotmain",
+    "storage_bucket": "chatspotmain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746639355246:android:4ff4869349b50a4c3da57f",
+        "android_client_info": {
+          "package_name": "com.chatspot.inc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt-6DGFCbTPdKo-Qyu2Hok3M4h8V1bP7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746639355246:android:18200094b088171b3da57f",
+        "android_client_info": {
+          "package_name": "com.sample.testing.c.samplec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt-6DGFCbTPdKo-Qyu2Hok3M4h8V1bP7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
