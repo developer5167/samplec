@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -76,6 +77,7 @@ Center getDropDownTextField(Function(dynamic) param0, {hint = "", double leftPad
         child: DropdownButtonFormField(
           iconDisabledColor: Colors.black,
             iconEnabledColor: blackColor,
+            icon: Icon(CupertinoIcons.arrow_down,color: pinkColor,size: 16,),
             isExpanded: true,
             value: gender[selection].value,
             items: gender,
@@ -95,8 +97,7 @@ Center getDropDownTextField2(Function(dynamic) param0, {hint = "", double leftPa
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: DropdownButtonFormField(
-          iconDisabledColor: Colors.black,
-            iconEnabledColor: blackColor,
+            icon: Icon(CupertinoIcons.arrow_down,color: pinkColor,size: 16,),
             isExpanded: true,
             value: gender2[selection].value,
             items: gender2,

@@ -125,16 +125,16 @@ class _VerifyOtpState extends State<VerifyOtp> {
                        // }
                      },
                      pinTheme: PinTheme(
-                       fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 20),
+                       fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 15),
                        borderRadius: BorderRadius.circular(5),
                        shape: PinCodeFieldShape.box,
                        borderWidth: 5,
 
                        inactiveBorderWidth: 2,
                        activeBorderWidth: 3,
-                       fieldHeight: 50,
-                       fieldWidth: 50,
-                       selectedBorderWidth: 5,
+                       fieldHeight: 45,
+                       fieldWidth: 45,
+                       selectedBorderWidth: 2,
                        selectedColor: blackColor,
                        disabledColor: pinkColor,
                        inactiveColor: pinkColor,
