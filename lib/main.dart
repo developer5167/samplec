@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:samplec/mobile/secondScreen.dart';
@@ -13,7 +15,16 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Firebase.initializeApp(options:  DefaultFirebaseOptions.currentPlatform,);
+  if (kDebugMode) {
+    try {
+      FirebaseFunctions.instance.useFunctionsEmulator('127.0.0.1', 5001);
+      FirebaseFirestore.instance.useFirestoreEmulator('127.0.0.1', 8080);
+    } catch (e) {
+      print(e);
+    }
+  }
   runApp(const MyApp());
 }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:samplec/MyData.dart';
+import 'package:samplec/constants.dart';
 import 'package:samplec/mobile/question_page_two.dart';
 
 import '../colors.dart';
@@ -10,8 +12,9 @@ class QuestionPageOne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MyData myData = MyData();
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -43,86 +46,112 @@ class QuestionPageOne extends StatelessWidget {
                     "I would appreciate it if you could provide me with the following information:",
                     style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Column(
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "1.Could you please specify your gender for our records?",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 17),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 17),
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Note:helps in maintaining personal preferences and matching algorithms",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 12,fontWeight: FontWeight.w300),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
                         ),
                       ),
-                      const SizedBox(height: 10,),
-                      getDropDownTextField((value){}),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      getDropDownTextField((value) {
+                        myData.gender = value;
+                      }),
                     ],
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Column(
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "2.If you are comfortable sharing your email address, kindly provide it at your earliest convenience",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 17),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 17),
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Note: Please rest assured that your contact information will be handled with the utmost confidentiality and will only be used for the intended purpose.",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 12,fontWeight: FontWeight.w300),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
                         ),
                       ),
-                      const SizedBox(height: 10,),
-                      getVerticalField(onTap: (){},onChanged: (value){},editTextHint: "email ",inputField: TextInputType.emailAddress)
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      getVerticalField(onTap: () {}, onChanged: (value) {
+                        myData.email = value;
+                      }, editTextHint: "email ", inputField: TextInputType.emailAddress)
                     ],
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Column(
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "3.Interested-in?",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 17),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 17),
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Note:helps in maintaining personal preferences and matching algorithms",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor),fontSize: 12,fontWeight: FontWeight.w300),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
                         ),
                       ),
-                      const SizedBox(height: 10,),
-                      getDropDownTextField2((value){}),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      getDropDownTextField2((value) {
+                        myData.interestedIn = value;
+                      }),
                     ],
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const QuestionPageTwo()));
+                    onTap: () {
+                      if (myData.checkFirstPageStatus()) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const QuestionPageTwo()));
+                      } else {
+                        Constants.showSnackBar(context, "Field's can't be empty");
+                      }
                     },
                     child: Container(
                       decoration: const BoxDecoration(color: pinkColor, borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child:  Padding(
+                      child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         child: Text(
                           "NEXT",
-                          style: GoogleFonts.poppins(textStyle:const TextStyle(color: whiteColor, fontWeight: FontWeight.w700, fontSize: 15)),
+                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: whiteColor, fontWeight: FontWeight.w700, fontSize: 15)),
                         ),
                       ),
                     ),
                   ),
-                  Container(height: 50,),
+                  Container(
+                    height: 50,
+                  ),
                 ],
               ),
             ),

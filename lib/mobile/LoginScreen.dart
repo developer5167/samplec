@@ -2,27 +2,29 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:samplec/constants.dart';
+import 'package:http/http.dart';
+import 'package:samplec/SharedPref.dart';
 import 'package:samplec/mobile/homeScreen.dart';
+import 'package:samplec/mobile/verifyOtp.dart';
 import 'package:samplec/network/genericRepository.dart';
 
 import '../MyData.dart';
-import '../SharedPref.dart';
 import '../colors.dart';
+import '../constants.dart';
 import '../styles.dart';
 
-class QuestionPageTwo extends StatefulWidget {
-  const QuestionPageTwo({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<QuestionPageTwo> createState() => _QuestionPageTwoState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _QuestionPageTwoState extends State<QuestionPageTwo> {
+class _LoginScreenState extends State<LoginScreen> {
+  MyData myData = MyData();
+
   @override
   Widget build(BuildContext context) {
-    MyData myData = MyData();
-
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -60,7 +62,7 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "We kindly ask you to provide your name as you would prefer it to appear in our records",
+                          "If you could kindly provide us with your mobile number, it will allow us to ensure that we can reach you promptly and efficiently when necessary",
                           style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 15, fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -70,7 +72,7 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Note: Please rest assured that your contact information will be handled with the utmost confidentiality and will only be used for the intended purpose.",
+                          "Note: lease rest assured that your contact details will be treated with the utmost confidentiality and will only be used for official communication purposes.",
                           style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
                         ),
                       ),
@@ -80,44 +82,10 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                       getVerticalField(
                           onTap: () {},
                           onChanged: (value) {
-                            myData.name = value;
+                            myData.mobileNumber = value;
                           },
-                          editTextHint: "Name*",
-                          inputField: TextInputType.name)
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "If you have a preferred nickname that you would like us to use in our correspondence, please feel free to share it at your convenience",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Note: please rest assured that any details you share will be treated with the utmost confidentiality.",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      getVerticalField(
-                          onTap: () {},
-                          onChanged: (value) {
-                            myData.nickName = value;
-                          },
-                          editTextHint: "Nick Name(optional)",
-                          inputField: TextInputType.name)
+                          editTextHint: "Mobile Number*",
+                          inputField: TextInputType.phone)
                     ],
                   ),
                   const SizedBox(
@@ -125,11 +93,10 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      if (myData.checkSecondPageStatus()) {
-                        print('>>>>>>>');
-
-                        pushDataToDB(myData,context);
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                      //check weather account exists or not, if account doesn't exist send to OTP screen and then start asking questions, else directly open home screen
+                      if (myData.checkLoginScreenStatus()) {
+                        checkUserInDB();
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>const VerifyOtp()));
                       } else {
                         Constants.showSnackBar(context, "Field's can't be empty");
                       }
@@ -139,7 +106,7 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         child: Text(
-                          "Submit",
+                          "Verify",
                           style: GoogleFonts.poppins(textStyle: const TextStyle(color: whiteColor, fontWeight: FontWeight.w700, fontSize: 15)),
                         ),
                       ),
@@ -155,28 +122,30 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
         ),
       ),
     );
-
   }
 
-  void pushDataToDB(MyData myData, BuildContext context) async{
-    GenericRepo genericRepo =GenericRepo();
+  void checkUserInDB() async {
+    GenericRepo genericRepo = GenericRepo();
     SharedPref sharedPref = SharedPref();
+    if (!await Constants.checkNetWorkConnection()) {
+      if (!mounted) return;
+      Constants.showSnackBar(context, "Check internet Connection and try again");
+      return;
+    }
+    print('>>>>>>>   ${myData.mobileNumber}');
+
     try {
-      var response = await genericRepo.loginRequest(myData);
-      if(response?.statusCode == 200){
-        MyData loginResponseData = MyData.fromJson(json.decode(response!.body));
+      Response? loginResponse = await genericRepo.checkUser(myData.mobileNumber.toString());
+      if (!mounted) return;
+      if (loginResponse!.statusCode == 200) {
+        MyData loginResponseData = MyData.fromJson(json.decode(loginResponse.body));
         sharedPref.save("user", loginResponseData);
-        MyData user = MyData.fromJson(await sharedPref.read("user"));
-        print("DATA PUSHED TO DB ${user.id}");
-        if (!mounted) return;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      }else{
-        print("DATA PUSHED TO DB ${response?.statusCode}");
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VerifyOtp()));
       }
     } catch (e) {
       print(e);
     }
-
-
   }
 }
