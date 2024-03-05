@@ -5,13 +5,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:samplec/SharedPref.dart';
 import 'package:samplec/mobile/homeScreen.dart';
+import 'package:samplec/mobile/question_page_one.dart';
+import 'package:samplec/mobile/question_page_two.dart';
 import 'package:samplec/mobile/verifyOtp.dart';
 import 'package:samplec/network/genericRepository.dart';
 
-import '../MyData.dart';
+import 'model/MyData.dart';
 import '../colors.dart';
 import '../constants.dart';
 import '../styles.dart';
+import 'model/OtpResponse.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -72,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Note: lease rest assured that your contact details will be treated with the utmost confidentiality and will only be used for official communication purposes.",
+                          "Note: OTP Not Required",
                           style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
                         ),
                       ),
@@ -125,27 +128,59 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void checkUserInDB() async {
-    GenericRepo genericRepo = GenericRepo();
-    SharedPref sharedPref = SharedPref();
-    if (!await Constants.checkNetWorkConnection()) {
-      if (!mounted) return;
-      Constants.showSnackBar(context, "Check internet Connection and try again");
-      return;
-    }
-    print('>>>>>>>   ${myData.mobileNumber}');
-
-    try {
-      Response? loginResponse = await genericRepo.checkUser(myData.mobileNumber.toString());
-      if (!mounted) return;
-      if (loginResponse!.statusCode == 200) {
-        MyData loginResponseData = MyData.fromJson(json.decode(loginResponse.body));
-        sharedPref.save("user", loginResponseData);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      } else {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VerifyOtp()));
-      }
-    } catch (e) {
-      print(e);
-    }
+    myData.id = "chatSpotUserID_${myData.mobileNumber}";
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const QuestionPageOne()));
+    // GenericRepo genericRepo = GenericRepo();
+    // SharedPref sharedPref = SharedPref();
+    // if (!await Constants.checkNetWorkConnection()) {
+    //   if (!mounted) return;
+    //   Constants.showSnackBar(context, "Check internet Connection and try again");
+    //   return;
+    // }
+    // print('>>>>>>>   ${myData.mobileNumber}');
+    //
+    // try {
+    //   Response? loginResponse = await genericRepo.checkUser(myData.mobileNumber.toString());
+    //   if (!mounted) return;
+    //   if (loginResponse!.statusCode == 200) {
+    //     MyData loginResponseData = MyData.fromJson(json.decode(loginResponse.body));
+    //     sharedPref.save("user", loginResponseData);
+    //     if (loginResponseData.gender == "" && loginResponseData.email == "" && loginResponseData.interestedIn == "") {
+    //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const QuestionPageOne()));
+    //     } else if (loginResponseData.name == "") {
+    //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const QuestionPageTwo()));
+    //     } else {
+    //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(loginResponseData: loginResponseData)));
+    //     }
+    //   } else {
+    //     sendOtp();
+    //   }
+    // } catch (e) {
+    //   if (!mounted) return;
+    //   Constants.showSnackBar(context, "No internet available,please check your able to open google.com");
+    // }
   }
+
+  // void sendOtp() async {
+  //   GenericRepo genericRepo = GenericRepo();
+  //   if (!await Constants.checkNetWorkConnection()) {
+  //     if (!mounted) return;
+  //     Constants.showSnackBar(context, "Check internet Connection and try again");
+  //     return;
+  //   }
+  //   try {
+  //     Response? response = await genericRepo.sendOtp(myData);
+  //     if (!mounted) return;
+  //     if (response!.statusCode == 200) {
+  //       OtpResponse otpResponse = OtpResponse.fromJson(json.decode(response.body));
+  //       Constants.showSnackBar(context, otpResponse.message![0]);
+  //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const VerifyOtp()));
+  //     } else {
+  //       Constants.showSnackBar(context, response.body);
+  //     }
+  //   } catch (e) {
+  //     if (!mounted) return;
+  //     Constants.showSnackBar(context, "Error sending OTP");
+  //   }
+  // }
 }

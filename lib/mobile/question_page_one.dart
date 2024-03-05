@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:samplec/MyData.dart';
+import 'package:samplec/mobile/model/MyData.dart';
 import 'package:samplec/constants.dart';
 import 'package:samplec/mobile/question_page_two.dart';
 
@@ -95,36 +95,11 @@ class QuestionPageOne extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      getVerticalField(onTap: () {}, onChanged: (value) {
+                      getVerticalField(onTap: () {
+
+                      }, onChanged: (value) {
                         myData.email = value;
                       }, editTextHint: "email ", inputField: TextInputType.emailAddress)
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "3.Interested-in?",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 17),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Note:helps in maintaining personal preferences and matching algorithms",
-                          style: GoogleFonts.poppins(textStyle: const TextStyle(color: blackColor), fontSize: 12, fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      getDropDownTextField2((value) {
-                        myData.interestedIn = value;
-                      }),
                     ],
                   ),
                   const SizedBox(

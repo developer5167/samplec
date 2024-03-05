@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
-import 'package:samplec/MyData.dart';
+import 'package:samplec/mobile/model/MyData.dart';
 import 'package:samplec/SharedPref.dart';
 import 'package:samplec/mobile/homeScreen.dart';
+import 'package:samplec/mobile/model/OtpResponse.dart';
+import 'package:samplec/mobile/model/VerifyOtpCode.dart';
 import 'package:samplec/mobile/question_page_one.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -14,6 +16,7 @@ import '../colors.dart';
 import '../constants.dart';
 import '../network/genericRepository.dart';
 import 'LoginScreen.dart';
+import 'model/VerifyOtpStatus.dart';
 
 class VerifyOtp extends StatefulWidget {
   const VerifyOtp({super.key});
@@ -22,9 +25,11 @@ class VerifyOtp extends StatefulWidget {
 }
 
 class _VerifyOtpState extends State<VerifyOtp> {
+
   TextEditingController textEditingController = TextEditingController();
   StreamController<ErrorAnimationType>? errorController;
   MyData myData = MyData();
+  VerifyOtpCode verifyOtpCode =  VerifyOtpCode();
   var sharedPref = SharedPref();
   GenericRepo genericRepo = GenericRepo();
   String currentText = "";
@@ -157,9 +162,10 @@ class _VerifyOtpState extends State<VerifyOtp> {
                       )
                     ],
                     onCompleted: (v) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const QuestionPageOne()));
-
+                      verifyOtpCode.mobileNumber = myData.mobileNumber;
+                      verifyOtpCode.otp = v;
                       debugPrint("Completed");
+                      verifyCode(verifyOtpCode);
                     },
                     // onTap: () {
                     //   print("Pressed");
@@ -185,38 +191,28 @@ class _VerifyOtpState extends State<VerifyOtp> {
       ),
     );
   }
-  void callLoginApi() async {
+  void verifyCode(VerifyOtpCode verifyOtpCode) async {
+    GenericRepo genericRepo = GenericRepo();
     if (!await Constants.checkNetWorkConnection()) {
       if (!mounted) return;
       Constants.showSnackBar(context, "Check internet Connection and try again");
       return;
     }
-    Response? loginResponse = await genericRepo.loginRequest(myData);
-    if (!mounted) return;
-    if (loginResponse!.statusCode == 200) {
-      MyData loginResponseData = MyData.fromJson(json.decode(loginResponse.body));
-      sharedPref.save("user", loginResponseData);
-      loadSharedPrefs();
-    } else {
-      Constants.showSnackBar(context, 'please enter valid username & password');
-    }
-  }
-  loadSharedPrefs() async {
     try {
-      MyData user = MyData.fromJson(await sharedPref.read("user"));
-      if (user.id == "") {
-        if (!mounted) return;
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Response? response = await genericRepo.verifyOtp(verifyOtpCode);
+      if (!mounted) return;
+      if (response!.statusCode == 200) {
+        VerifyOtpStatus otpResponse = VerifyOtpStatus.fromJson(json.decode(response.body));
+        if(otpResponse.status ==true) {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const QuestionPageOne()));
+        }
+        Constants.showSnackBar(context, otpResponse.message!);
       } else {
-        if (!mounted) return;
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Constants.showSnackBar(context, response.body);
       }
     } catch (e) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()));
-      Constants.showSnackBar(context, "some thing went wrong");
+      print(e);
     }
   }
+
 }

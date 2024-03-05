@@ -1,13 +1,8 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:samplec/mobile/secondScreen.dart';
-import 'firebase_options.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'colors.dart';
 import 'mobile/splash.dart';
 
 void main() async {
@@ -15,21 +10,25 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+  MobileAds.instance.initialize();
+  print('initialised.......');
+  MobileAds.instance.updateRequestConfiguration(
+    RequestConfiguration(
+      testDeviceIds: [
+/* These are `IDs` of different mobile phones on which I have installed and tested my app.  */
 
-  await Firebase.initializeApp(options:  DefaultFirebaseOptions.currentPlatform,);
-  if (kDebugMode) {
-    try {
-      FirebaseFunctions.instance.useFunctionsEmulator('127.0.0.1', 5001);
-      FirebaseFirestore.instance.useFirestoreEmulator('127.0.0.1', 8080);
-    } catch (e) {
-      print(e);
-    }
-  }
+        '568858D3910384AA29D4896CBE3627CE',
+        // "85BB5D148620523D06692E2F45ED4A30",
+        // "2F4C6DEC28A5611835CA2C3EE14EF31C",
+      ],
+    ),
+  );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -37,63 +36,42 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
     );
   }
-}
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return  Container(color: Colors.white70,);
+  ThemeData _buildLightTheme() {
+    return ThemeData(
+      textTheme: _buildTextTheme(Brightness.light),
+      brightness: Brightness.light,
+      primarySwatch: Colors.pink,
+      // Define other light theme properties here
+    );
+  }
+
+  ThemeData _buildDarkTheme() {
+    return ThemeData(
+      textTheme: _buildTextTheme(Brightness.light),
+
+      brightness: Brightness.dark,
+      primarySwatch: Colors.pink,
+      // Define other dark theme properties here
+    );
+  }
+
+  TextTheme _buildTextTheme(Brightness brightness) {
+    return brightness == Brightness.light
+        ? ThemeData.light().textTheme.copyWith(
+              headlineMedium: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            )
+        // Define your light mode text styles here
+        // Add more text styles as needed,
+        : ThemeData.dark().textTheme.copyWith(
+            // Define your dark mode text styles here
+            // Add more text styles as needed
+            );
   }
 }
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key});
-//
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//   late StreamSubscription<DocumentSnapshot> subscription;
-//   DocumentReference documentReference = FirebaseFirestore.instance.collection('sample').doc('ckdjc');
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     // Start listening to document events
-//     subscription = documentReference.snapshots().listen((snapshot) {
-//       if (snapshot.exists) {
-//         var data = snapshot.data();
-//         print('Document Data: $data');
-//         Navigator.push(context, MaterialPageRoute(builder: (context) => const SecondScreen()));
-//         stopListening();
-//         // Update UI or perform other actions based on the document events
-//       } else {
-//         print('Document does not exist');
-//       }
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Firestore Document Listener'),
-//         ),
-//         body: Center(child: Container()));
-//   }
-//
-//   void stopListening() async {
-//     await subscription.cancel();
-//     print('Stopped Listening to Firestore Events');
-//   }
-//
-//   @override
-//   void dispose() {
-//     // Cancel the subscription when the widget is disposed
-//     print('Stopped Listening to Firestore Events');
-//
-//     subscription.cancel();
-//     super.dispose();
-//   }
-// }

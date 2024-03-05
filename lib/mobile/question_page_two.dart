@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:samplec/constants.dart';
 import 'package:samplec/mobile/homeScreen.dart';
 import 'package:samplec/network/genericRepository.dart';
 
-import '../MyData.dart';
+import 'model/MyData.dart';
 import '../SharedPref.dart';
 import '../colors.dart';
 import '../styles.dart';
@@ -128,7 +129,7 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
                       if (myData.checkSecondPageStatus()) {
                         print('>>>>>>>');
 
-                        pushDataToDB(myData,context);
+                        pushDataToDB(myData, context);
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
                       } else {
                         Constants.showSnackBar(context, "Field's can't be empty");
@@ -155,28 +156,19 @@ class _QuestionPageTwoState extends State<QuestionPageTwo> {
         ),
       ),
     );
-
   }
 
-  void pushDataToDB(MyData myData, BuildContext context) async{
-    GenericRepo genericRepo =GenericRepo();
+  void pushDataToDB(MyData myData, BuildContext context) async {
     SharedPref sharedPref = SharedPref();
     try {
-      var response = await genericRepo.loginRequest(myData);
-      if(response?.statusCode == 200){
-        MyData loginResponseData = MyData.fromJson(json.decode(response!.body));
-        sharedPref.save("user", loginResponseData);
-        MyData user = MyData.fromJson(await sharedPref.read("user"));
-        print("DATA PUSHED TO DB ${user.id}");
-        if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      }else{
-        print("DATA PUSHED TO DB ${response?.statusCode}");
-      }
+      sharedPref.save("user", myData);
+      if (!mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const HomeScreen()));
     } catch (e) {
       print(e);
     }
-
-
   }
 }

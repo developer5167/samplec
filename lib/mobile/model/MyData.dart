@@ -2,13 +2,14 @@ class MyData {
   String? id = "";
   String? gender = "";
   String? email = "";
-  String? interestedIn = "";
+  String? interestedIn = "auto";
   String? name = "";
   String? nickName = "";
   String? mobileNumber = "";
-  bool? accountStatus=true;
-  bool? blockedStatus=false;
-  int? blockedCount=0;
+  bool? accountStatus = true;
+  bool? blockedStatus = false;
+  int? blockedCount = 0;
+  String? chatId = "";
 
   static final MyData _httpClientManager = MyData._internal();
 
@@ -23,6 +24,7 @@ class MyData {
   MyData.fromJson(Map<String, dynamic> json) {
     gender = json['gender'];
     id = json['id'];
+    chatId = json['chatId'];
     accountStatus = json['accountStatus'];
     blockedStatus = json['blockedStatus'];
     blockedCount = json['blockedCount'];
@@ -32,12 +34,14 @@ class MyData {
     nickName = json['nickName'];
     mobileNumber = json['mobileNumber'];
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['gender'] = gender;
     data['id'] = id;
     data['accountStatus'] = accountStatus;
     data['blockedStatus'] = blockedStatus;
+    data['chatId'] = chatId;
     data['blockedCount'] = blockedCount;
     data['email'] = email;
     data['interestedIn'] = interestedIn;
@@ -54,6 +58,7 @@ class MyData {
       return false;
     }
   }
+
   bool checkSecondPageStatus() {
     if (name != "") {
       return true;
@@ -61,6 +66,7 @@ class MyData {
       return false;
     }
   }
+
   bool checkLoginScreenStatus() {
     if (mobileNumber != "") {
       return true;

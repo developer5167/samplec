@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:samplec/mobile/secondScreen.dart';
 
-import '../MyData.dart';
+import 'model/MyData.dart';
 import '../SharedPref.dart';
 import '../constants.dart';
 import 'LoginScreen.dart';
@@ -17,15 +18,22 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2),(){
+    Future.delayed(const Duration(seconds: 3), () {
       loadSharedPrefs();
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor:Colors.white,body: Center(child: SizedBox(width:150,height:90,child: Image.asset("assets/images/logo.png")))) ;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Lottie.asset('assets/images/chat_spot_logo.json'),
+      ),
+    );
   }
+
   loadSharedPrefs() async {
     var sharedPref = SharedPref();
     try {
@@ -35,12 +43,10 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
       } else {
         if (!mounted) return;
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       }
     } catch (e) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
       Constants.showSnackBar(context, "some thing went wrong");
     }
   }
